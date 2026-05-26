@@ -184,6 +184,22 @@
   .pdf-frame { width: 100%; height: 82vh; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; background: #fff; }
   .pdf-viewer.pdf-scroll { max-height: 82vh; overflow-y: auto; padding-right: 4px; scroll-behavior: smooth; }
   .pdf-page { width: 100%; display: block; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); background: #fff; }
+  /* 영역 캡처 (스샷&드래그) */
+  .pdf-viewer.capture-mode, .pdf-viewer.capture-mode .pdf-page { cursor: crosshair; }
+  .cap-selbox { position: fixed; z-index: 9999; border: 2px solid #2d72d2; background: rgba(80,150,255,0.18); pointer-events: none; display: none; border-radius: 2px; }
+  /* 작성창 캡처/사진 + 형광펜 편집 */
+  .cap-edit { margin-top: 8px; border: 1px solid rgba(90,139,191,0.4); border-radius: 10px; padding: 8px; background: rgba(255,255,255,0.85); }
+  .cap-edit-tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .cap-tool { border: 1px solid rgba(0,0,0,0.15); background: #fff; border-radius: 8px; padding: 5px 9px; font-size: 12px; font-weight: 600; cursor: pointer; color: #34495e; }
+  .cap-tool:hover { background: #f3f7fb; }
+  .cap-tool.active { background: #fff7c2; border-color: #e6c200; }
+  .cap-tool.danger { color: #c0392b; }
+  .cap-hint { font-size: 11px; color: #8aa0b6; }
+  .cap-edit-stage { max-height: 300px; overflow: auto; border-radius: 8px; background: #f4f7fb; padding: 6px; text-align: center; }
+  .cap-edit-wrap { position: relative; display: inline-block; }
+  .cap-edit-img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
+  .cap-edit-overlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+  .cap-edit-stage.hl .cap-edit-overlay { pointer-events: auto; cursor: crosshair; }
   .section-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
   .section-bar:empty { display: none; }
   .sec-hint { font-size: 12px; font-weight: 700; color: #5a6b7a; margin-right: 2px; }
@@ -298,6 +314,7 @@
       <span>📄 생기부 원본</span>
       <div class="pane-head-tools">
         <button class="btn btn-primary btn-sm" id="pdfBtn">📄 PDF 불러오기</button>
+        <button class="btn btn-sm" id="captureBtn" title="생기부에서 영역을 드래그해 캡처 → 오른쪽 작성창에 첨부됩니다">✂️ 영역 캡처</button>
         <input type="file" id="pdfFile" accept="application/pdf,.pdf" style="display:none">
       </div>
     </div>
@@ -306,7 +323,7 @@
   </section>
   <section class="pane pane-right">
     <div class="pane-head">
-      <span>💬 의견 (포스트잇 · 리플)</span>
+      <span>📌 포스트잇</span>
       <div class="pane-head-tools">
         <div class="filter-section" style="margin-left:0; padding:5px 10px;">
           <label>유형 보기:</label>
@@ -718,7 +735,7 @@
     pdfRenderedFor = key;
     if(pages && pages.length){
       v.classList.add('pdf-scroll');
-      v.innerHTML = pages.map((src,i)=>`<img class="pdf-page" id="pdfpage-${i+1}" src="${src}" alt="생기부 ${i+1}쪽">`).join('');
+      v.innerHTML = pages.map((src,i)=>`<img class="pdf-page" id="pdfpage-${i+1}" src="${src}" alt="생기부 ${i+1}쪽" draggable="false">`).join('');
     } else if(url){
       v.classList.remove('pdf-scroll');
       v.innerHTML = `<iframe class="pdf-frame" src="${url}" title="생기부 원본"></iframe>`;
@@ -797,6 +814,55 @@
   };
   document.getElementById('pdfBtn').addEventListener('click', ()=> document.getElementById('pdfFile').click());
   document.getElementById('pdfFile').addEventListener('change', handlePdf);
+
+  /* ---------- 영역 캡처 (스샷&드래그 → 작성창 첨부) ---------- */
+  let capMode=false, capStart=null, capImgEl=null;
+  function getSelBox(){ let b=document.getElementById('capSelBox'); if(!b){ b=document.createElement('div'); b.id='capSelBox'; b.className='cap-selbox'; document.body.appendChild(b); } return b; }
+  function hideSelBox(){ const b=document.getElementById('capSelBox'); if(b) b.style.display='none'; }
+  function setCaptureMode(on){
+    if(on){
+      if(!currentStudentId){ alert('먼저 학생을 선택해 주세요.'); return; }
+      const pages=pdfPagesByStudent[currentStudentId];
+      if(!pages || !pages.length){ alert('캡처는 생기부 PDF가 이미지로 준비된 뒤 작동해요.\n웹 링크(https)에서 PDF를 불러오면 잠시 후 준비됩니다. (로컬 파일 더블클릭에서는 지원되지 않아요.)'); return; }
+    }
+    capMode=on; capStart=null; capImgEl=null; hideSelBox();
+    const v=document.getElementById('pdfViewer'); if(v) v.classList.toggle('capture-mode', on);
+    const btn=document.getElementById('captureBtn'); if(btn){ btn.classList.toggle('active', on); btn.textContent = on ? '✂️ 캡처 취소' : '✂️ 영역 캡처'; }
+    if(on) toast('생기부에서 캡처할 영역을 드래그하세요');
+  }
+  function clampToImg(x,y){ const r=capImgEl.getBoundingClientRect(); return { x:Math.min(Math.max(x,r.left),r.right), y:Math.min(Math.max(y,r.top),r.bottom) }; }
+  function updateSelBox(curX,curY){
+    if(!capStart||!capImgEl) return;
+    const c=clampToImg(curX,curY);
+    const x1=Math.min(capStart.x,c.x), y1=Math.min(capStart.y,c.y), x2=Math.max(capStart.x,c.x), y2=Math.max(capStart.y,c.y);
+    const b=getSelBox(); b.style.display='block'; b.style.left=x1+'px'; b.style.top=y1+'px'; b.style.width=(x2-x1)+'px'; b.style.height=(y2-y1)+'px';
+  }
+  document.getElementById('captureBtn').addEventListener('click', ()=> setCaptureMode(!capMode));
+  document.getElementById('pdfViewer').addEventListener('mousedown', function(e){
+    if(!capMode) return;
+    const img=e.target.closest && e.target.closest('.pdf-page'); if(!img) return;
+    e.preventDefault();
+    capImgEl=img; capStart={ x:e.clientX, y:e.clientY }; updateSelBox(e.clientX,e.clientY);
+  });
+  document.addEventListener('mousemove', function(e){ if(capMode && capStart) updateSelBox(e.clientX,e.clientY); });
+  document.addEventListener('mouseup', function(e){
+    if(!capMode || !capStart || !capImgEl) return;
+    const startC=clampToImg(capStart.x,capStart.y), endC=clampToImg(e.clientX,e.clientY);
+    const r=capImgEl.getBoundingClientRect();
+    const left=Math.min(startC.x,endC.x), top=Math.min(startC.y,endC.y), w=Math.abs(endC.x-startC.x), h=Math.abs(endC.y-startC.y);
+    capStart=null; hideSelBox();
+    if(w<8 || h<8){ return; }    // 선택이 너무 작으면 무시
+    const sX=capImgEl.naturalWidth/r.width, sY=capImgEl.naturalHeight/r.height;
+    const sx=(left-r.left)*sX, sy=(top-r.top)*sY, sw=w*sX, sh=h*sY;
+    const cv=document.createElement('canvas'); cv.width=Math.max(1,Math.round(sw)); cv.height=Math.max(1,Math.round(sh));
+    try{ cv.getContext('2d').drawImage(capImgEl, sx,sy,sw,sh, 0,0,cv.width,cv.height); }
+    catch(err){ alert('캡처 실패: '+err.message); return; }
+    let data; try{ data=canvasToData(cv); }catch(err){ alert('캡처 변환 실패: '+err.message); return; }
+    composerImageData=data; composerHighlights=[]; composerHLMode=false; renderComposerImg();
+    setCaptureMode(false);
+    const comp=document.getElementById('composer'); if(comp) comp.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    toast('캡처했어요. 형광펜·코멘트를 달고 등록하세요.');
+  });
 
   /* ---------- 컨설팅 의견 게시판 ---------- */
   function captureFormInputs(){
@@ -963,6 +1029,22 @@
       reader.onerror=()=>reject(new Error('파일을 읽을 수 없습니다.')); reader.readAsDataURL(file);
     });
   }
+  // 캔버스를 용량 제한(≤~700KB) JPEG dataURL로 변환 (compressImage와 동일 기준)
+  function canvasToData(cv){ let q=0.85, r=cv.toDataURL('image/jpeg',q); while(r.length>700000 && q>0.3){ q-=0.15; r=cv.toDataURL('image/jpeg',q); } return r; }
+  // 형광펜 경로를 이미지에 합성(굽기) → 하나의 dataURL
+  function bakeHighlights(src, paths){
+    return new Promise((resolve)=>{
+      if(!paths || !paths.length){ resolve(src); return; }
+      const img=new Image();
+      img.onload=()=>{
+        const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+        const x=c.getContext('2d'); x.drawImage(img,0,0);
+        paths.forEach(p=>{ if(!p.points||!p.points.length)return; x.lineCap='round'; x.lineJoin='round'; x.lineWidth=p.width; x.strokeStyle=p.color; x.beginPath(); x.moveTo(p.points[0].x,p.points[0].y); for(let i=1;i<p.points.length;i++)x.lineTo(p.points[i].x,p.points[i].y); x.stroke(); });
+        resolve(canvasToData(c));
+      };
+      img.onerror=()=>resolve(src); img.src=src;
+    });
+  }
   window.handleFormImage = async function(fid, event){
     const file=event.target.files[0]; if(!file)return; captureFormInputs();
     try{ const data=await compressImage(file,1000,0.7); if(!formState[fid])formState[fid]={}; formState[fid].image=data; renderBoard(); }
@@ -996,11 +1078,51 @@
   /* ---------- 인라인 의견 입력창 (composer · 팝업 없이 바로 작성) ---------- */
   let composerTag = null;
   let composerImageData = null;
+  let composerHighlights = [];     // 형광펜 경로 [{points:[{x,y}], color, width}]
+  let composerHLMode = false;      // 형광펜 모드 on/off
   function renderComposerImg(){
     const w=document.getElementById('composerImgPreview'); if(!w) return;
-    w.innerHTML = composerImageData ? `<div class="img-preview-wrap" style="margin-top:8px"><img src="${composerImageData}"><button type="button" class="img-remove-btn" onclick="removeComposerImg()">✕</button></div>` : '';
+    if(!composerImageData){ w.innerHTML=''; return; }
+    w.innerHTML = `
+      <div class="cap-edit">
+        <div class="cap-edit-tools">
+          <button type="button" class="cap-tool ${composerHLMode?'active':''}" onclick="toggleComposerHL()">🖍 형광펜${composerHLMode?' 끄기':''}</button>
+          <button type="button" class="cap-tool" onclick="undoComposerHL()">↩ 형광펜 지우기</button>
+          <button type="button" class="cap-tool danger" onclick="removeComposerImg()">✕ 이미지 제거</button>
+          <span class="cap-hint">${composerHLMode?'이미지 위를 드래그해 강조하세요':'캡처/사진에 형광펜으로 강조할 수 있어요'}</span>
+        </div>
+        <div class="cap-edit-stage ${composerHLMode?'hl':''}">
+          <div class="cap-edit-wrap">
+            <img class="cap-edit-img" id="capImg" src="${composerImageData}" alt="첨부 이미지">
+            <canvas class="cap-edit-overlay" id="capOverlay"></canvas>
+          </div>
+        </div>
+      </div>`;
+    mountComposerOverlay();
   }
-  window.removeComposerImg = function(){ composerImageData=null; renderComposerImg(); };
+  function mountComposerOverlay(){
+    const img=document.getElementById('capImg'), overlay=document.getElementById('capOverlay'); if(!img||!overlay) return;
+    const setup=()=>{ overlay.width=img.naturalWidth||img.width; overlay.height=img.naturalHeight||img.height; drawComposerHL(); bindComposerOverlay(); };
+    if(img.complete) setup(); else img.onload=setup;
+  }
+  function drawComposerHL(){
+    const overlay=document.getElementById('capOverlay'); if(!overlay) return;
+    const c=overlay.getContext('2d'); c.clearRect(0,0,overlay.width,overlay.height);
+    composerHighlights.forEach(p=>{ if(!p.points.length)return; c.lineCap='round'; c.lineJoin='round'; c.lineWidth=p.width; c.strokeStyle=p.color; c.beginPath(); c.moveTo(p.points[0].x,p.points[0].y); for(let i=1;i<p.points.length;i++)c.lineTo(p.points[i].x,p.points[i].y); c.stroke(); });
+  }
+  function bindComposerOverlay(){
+    const overlay=document.getElementById('capOverlay'); if(!overlay || overlay.dataset.bound==='1') return;
+    let drawing=false, active=null;
+    const pt=(ev)=>{ const r=overlay.getBoundingClientRect(); return { x:(ev.clientX-r.left)*(overlay.width/r.width), y:(ev.clientY-r.top)*(overlay.height/r.height) }; };
+    overlay.addEventListener('mousedown', ev=>{ if(!composerHLMode)return; drawing=true; const p=pt(ev); active={ points:[p], color:'rgba(255,235,59,0.45)', width:Math.max(14,Math.round(overlay.height*0.03)) }; composerHighlights.push(active); drawComposerHL(); ev.preventDefault(); ev.stopPropagation(); });
+    overlay.addEventListener('mousemove', ev=>{ if(!drawing||!active||!composerHLMode)return; active.points.push(pt(ev)); drawComposerHL(); });
+    const fin=()=>{ drawing=false; active=null; };
+    overlay.addEventListener('mouseup', fin); overlay.addEventListener('mouseleave', fin);
+    overlay.dataset.bound='1';
+  }
+  window.toggleComposerHL = function(){ composerHLMode=!composerHLMode; renderComposerImg(); };
+  window.undoComposerHL = function(){ composerHighlights.pop(); drawComposerHL(); };
+  window.removeComposerImg = function(){ composerImageData=null; composerHighlights=[]; composerHLMode=false; renderComposerImg(); };
   function syncComposerArea(){ const s=document.getElementById('composerArea'); if(s && currentArea!=='all' && AREAS.includes(currentArea)) s.value=currentArea; updateComposerSubjectVis(); }
   function updateComposerSubjectVis(){
     const sel=document.getElementById('composerSubject'), cust=document.getElementById('composerSubjectCustom'); if(!sel||!cust) return;
@@ -1024,7 +1146,7 @@
     document.getElementById('composerSubject').addEventListener('change', updateComposerSubjectVis);
     syncComposerArea();
   }
-  function submitComposer(){
+  async function submitComposer(){
     if(!currentStudentId){ alert('먼저 학생을 추가/선택해 주세요.'); return; }
     const text=document.getElementById('composerText').value.trim();
     const area=document.getElementById('composerArea').value;
@@ -1035,9 +1157,11 @@
       const ss=document.getElementById('composerSubject');
       subject = (ss.value==='__custom__') ? document.getElementById('composerSubjectCustom').value.trim() : ss.value;
     }
+    let image = composerImageData || null;
+    if(image && composerHighlights.length){ image = await bakeHighlights(image, composerHighlights); }  // 형광펜을 이미지에 합성
     const r=push(ref(null,`students/${currentStudentId}/memos`));
-    set(r, { author:myName||'', category:area, subject:subject||null, tag:tag, content:text, color:categoryColor(area), image:composerImageData||null, createdAt:Date.now(), comments:{} });
-    document.getElementById('composerText').value=''; composerImageData=null; renderComposerImg();
+    set(r, { author:myName||'', category:area, subject:subject||null, tag:tag, content:text, color:categoryColor(area), image:image, createdAt:Date.now(), comments:{} });
+    document.getElementById('composerText').value=''; composerImageData=null; composerHighlights=[]; composerHLMode=false; renderComposerImg();
     composerTag=null; document.querySelectorAll('#composerTags .tag-btn').forEach(x=>x.classList.remove('active'));
     document.getElementById('composerSubject').value=''; document.getElementById('composerSubjectCustom').value=''; updateComposerSubjectVis();
     toast('의견을 등록했어요');
