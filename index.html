@@ -6,6 +6,7 @@
 <title>생기부 컨설팅 프로그램 (실시간)</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif; background-color: #DCE7F2; min-height: 100vh; padding: 24px; color: #2c3e50; }
@@ -199,7 +200,7 @@
   .cap-edit-wrap { position: relative; display: inline-block; }
   .cap-edit-img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
   .cap-edit-overlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
-  .cap-edit-stage.hl .cap-edit-overlay { pointer-events: auto; cursor: crosshair; }
+  .cap-edit-stage.hl .cap-edit-overlay { pointer-events: auto; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Crect x='10' y='2' width='10' height='14' rx='2' fill='%23ffe14d' stroke='%23555' stroke-width='1.3'/%3E%3Cpolygon points='11,16 19,16 15,25' fill='%23fff6c2' stroke='%23555' stroke-width='1.3'/%3E%3C/svg%3E") 15 25, crosshair; }
   .section-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
   .section-bar:empty { display: none; }
   .sec-hint { font-size: 12px; font-weight: 700; color: #5a6b7a; margin-right: 2px; }
@@ -300,7 +301,7 @@
     <span class="legend-item"><span class="legend-dot" style="background:#FFDAB8"></span>봉사활동</span>
     <span class="legend-item"><span class="legend-dot" style="background:#FFF4B8"></span>교과세특</span>
     <span class="legend-item"><span class="legend-dot" style="background:#F5E1C8"></span>행동특성</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#FFFFFF; border:1px solid rgba(0,0,0,0.15)"></span>기타</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#D9C2F2"></span>기타</span>
   </div>
 </header>
 
@@ -450,13 +451,14 @@
     } catch(_){}
   });
 
-  const CATEGORY_COLORS = { '자율활동':'#FFD6D6','진로활동':'#C8E6F0','동아리활동':'#D4F0D4','봉사활동':'#FFDAB8','교과세특':'#FFF4B8','독서활동':'#E0D4F0','행동특성':'#F5E1C8','기타':'#FFFFFF' };
-  function categoryColor(cat) { return CATEGORY_COLORS[cat] || '#FFFFFF'; }
+  const CATEGORY_COLORS = { '자율활동':'#FFD6D6','진로활동':'#C8E6F0','동아리활동':'#D4F0D4','봉사활동':'#FFDAB8','교과세특':'#FFF4B8','독서활동':'#E0D4F0','행동특성':'#F5E1C8','기타':'#D9C2F2' };
+  function categoryColor(cat) { return CATEGORY_COLORS[cat] || '#D9C2F2'; }
   function lightenColor(hex, ratio) {
     const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
     const lr = Math.round(r + (255-r)*ratio), lg = Math.round(g + (255-g)*ratio), lb = Math.round(b + (255-b)*ratio);
     return `rgb(${lr}, ${lg}, ${lb})`;
   }
+  function hexToRgba(hex, a){ const h=(hex||'#D9C2F2').replace('#',''); const n=h.length===3?h.split('').map(c=>c+c).join(''):h; const r=parseInt(n.slice(0,2),16)||0, g=parseInt(n.slice(2,4),16)||0, b=parseInt(n.slice(4,6),16)||0; return `rgba(${r},${g},${b},${a})`; }
   const TAGS = { question:{label:'🔍 질문',class:'tag-question'}, interpret:{label:'💬 해석',class:'tag-interpret'}, suggest:{label:'💡 보완',class:'tag-suggest'}, etc:{label:'⭐ 기타',class:'tag-etc'} };
   const LEGACY_TAGS = { concern:{label:'⚠️ 우려',class:'tag-concern'}, agree:{label:'✅ 동의',class:'tag-agree'} };
   function getTag(k){ return TAGS[k] || LEGACY_TAGS[k] || TAGS.question; }
@@ -485,7 +487,8 @@
   function isConsultant(){ return role === 'consultant'; }
   function roleLabel(){ return role === 'consultant' ? '교사' : '학생'; }
   function canEdit(author){ return !!myName && (author||'').trim() === myName.trim(); }   // 본인이 쓴 의견만 수정
-  const DELETE_PASSWORD = "1234";   // 의견 삭제 시 입력하는 비밀번호 (원하는 값으로 변경하세요)
+  const ADMIN_CODE = "yb2026";          // ★ 교사 관리자 코드(= 로그인 비밀번호). 원하는 값으로 바꾸세요.
+  const DELETE_PASSWORD = ADMIN_CODE;   // 의견·캡처 삭제 비밀번호 = 로그인 비밀번호와 동일
   function passDeleteGate(msg){
     const pw = prompt((msg?msg+'\n\n':'') + '삭제하려면 비밀번호를 입력하세요.');
     if(pw===null) return false;
@@ -516,9 +519,25 @@
   function remove(r){ return r.remove(); }
   function push(r){ return r.push(); }
   const studentsRef = ref(null, 'students');
-  // 실시간 구독: 누가 바꾸든 모든 기기에 자동 반영
-  studentsRef.on('value', function(snap){ students = snap.val() || {}; afterChange(); }, function(err){ console.error(err); setConn(false); });
   fdb.ref('.info/connected').on('value', function(s){ setConn(!!s.val()); });
+  // 실시간 구독: 누가 바꾸든 모든 기기에 자동 반영
+  var _studentsSubscribed = false;
+  function subscribeStudents(){
+    if(_studentsSubscribed) return; _studentsSubscribed = true;
+    studentsRef.on('value', function(snap){ students = snap.val() || {}; afterChange(); }, function(err){ console.error(err); setConn(false); });
+  }
+  // 익명 로그인: 보안 규칙을 auth!=null로 잠가도 앱은 작동(주소만 아는 외부 raw 접근은 차단).
+  // 콘솔에서 '익명' 로그인을 켜야 동작. 아직 안 켰거나 개방 규칙이면 폴백으로 그대로 구독.
+  if(firebase.auth){
+    firebase.auth().onAuthStateChanged(function(user){ if(user) subscribeStudents(); });
+    firebase.auth().signInAnonymously().catch(function(e){
+      console.warn('익명 로그인 실패(콘솔에서 익명 로그인 사용 설정 필요). 개방 규칙이면 폴백으로 작동:', e && e.code);
+      subscribeStudents();
+      if(typeof toast==='function') toast('익명 로그인이 꺼져 있어요 — Firebase 콘솔 Authentication에서 "익명"을 켜주세요');
+    });
+  } else {
+    subscribeStudents();
+  }
 
   function ensureCurrentStudent(){
     if(role==='student'){ if(currentStudentId && !students[currentStudentId]) currentStudentId=null; return; }  // 학생은 본인 페이지 고정
@@ -538,7 +557,7 @@
   function setConn(on){ const d=document.getElementById('connDot'),t=document.getElementById('connText'); if(!d||!t) return; if(on){ d.className='conn-dot online'; t.textContent='실시간 연결됨'; } else { d.className='conn-dot offline'; t.textContent='연결 끊김 (인터넷 확인)'; } }
 
   /* ---------- 입장 (학생: 내 코드 / 교사: 관리자 코드) ---------- */
-  const ADMIN_CODE = "yb2026";   // ★ 교사 관리자 코드 — 원하는 값으로 바꾸세요
+  // ADMIN_CODE는 위쪽(삭제 비밀번호 옆)에서 한 번에 선언 → 로그인 비번과 삭제 비번 통합
   function showStep(step){
     document.getElementById('stepRole').style.display = step==='role' ? 'block' : 'none';
     document.getElementById('stepStudent').style.display = step==='student' ? 'block' : 'none';
@@ -643,8 +662,9 @@
     let html = ids.map(id=>{
       const hasCode = !!students[id].code;
       const key = `<span onclick="event.stopPropagation(); showStudentCode('${id}')" title="학생 코드 보기/설정" style="cursor:pointer; font-size:11px; padding:0 2px;">${hasCode?'🔑':'🔑❗'}</span>`;
-      const del = `<span class="tab-del" onclick="event.stopPropagation(); deleteStudent('${id}')" title="이 학생 페이지 삭제">✕</span>`;
-      return `<button class="student-tab ${id===currentStudentId?'active':''}" onclick="selectStudent('${id}')">${escapeHtml(students[id].name||'학번없음')}${key}${del}</button>`;
+      const clean = `<span onclick="event.stopPropagation(); clearStudentCaptures('${id}')" title="컨설팅 종료 시: 캡처·사진 이미지만 서버에서 삭제 (글 의견은 보존)" style="cursor:pointer; font-size:11px; padding:0 2px;">🧹</span>`;
+      const del = `<span class="tab-del" onclick="event.stopPropagation(); deleteStudent('${id}')" title="이 학생 페이지 전체 삭제 (의견까지 모두)">✕</span>`;
+      return `<button class="student-tab ${id===currentStudentId?'active':''}" onclick="selectStudent('${id}')">${escapeHtml(students[id].name||'학번없음')}${key}${clean}${del}</button>`;
     }).join('');
     html += `<button class="add-student-btn" onclick="addStudent()">＋ 새 학생(학번) 추가</button>`;
     wrap.innerHTML = html;
@@ -676,6 +696,21 @@
     const name = students[id]?(students[id].name||'이 학생'):'이 학생';
     if(!confirm(`'${name}' 페이지를 삭제하시겠습니까?\n이 학생의 모든 의견이 함께 삭제됩니다.`)) return;
     remove(ref(null,`students/${id}`));
+  };
+  // 컨설팅 종료 시: 이 학생의 캡처·사진 이미지(생기부 조각)만 서버에서 완전 삭제, 글 의견·코멘트는 보존
+  window.clearStudentCaptures = function(id){
+    if(!isConsultant()){ alert('교사(관리자)만 가능합니다.'); return; }
+    const s=students[id]; if(!s){ return; }
+    const memos=s.memos||{}; const updates={}; let n=0;
+    Object.keys(memos).forEach(mid=>{
+      if(memos[mid].image){ updates[`memos/${mid}/image`]=null; n++; }
+      const cs=memos[mid].comments||{};
+      Object.keys(cs).forEach(cid=>{ if(cs[cid] && cs[cid].image){ updates[`memos/${mid}/comments/${cid}/image`]=null; n++; } });
+    });
+    if(n===0){ alert('삭제할 캡처·사진 이미지가 없습니다. (이미 없음)'); return; }
+    if(!passDeleteGate(`'${s.name||'이 학생'}'의 캡처·사진 이미지 ${n}개를 서버에서 완전히 삭제합니다.\n글 의견·코멘트는 그대로 남습니다. (되돌릴 수 없습니다)`)) return;
+    update(ref(null,`students/${id}`), updates);
+    toast(`캡처·사진 이미지 ${n}개를 삭제했어요`);
   };
   function currentMemos(){ if(!currentStudentId||!students[currentStudentId]) return {}; return students[currentStudentId].memos||{}; }
 
@@ -1112,11 +1147,12 @@
   }
   function bindComposerOverlay(){
     const overlay=document.getElementById('capOverlay'); if(!overlay || overlay.dataset.bound==='1') return;
-    let drawing=false, active=null;
+    let drawing=false, active=null, startPt=null;
     const pt=(ev)=>{ const r=overlay.getBoundingClientRect(); return { x:(ev.clientX-r.left)*(overlay.width/r.width), y:(ev.clientY-r.top)*(overlay.height/r.height) }; };
-    overlay.addEventListener('mousedown', ev=>{ if(!composerHLMode)return; drawing=true; const p=pt(ev); active={ points:[p], color:'rgba(255,235,59,0.45)', width:Math.max(14,Math.round(overlay.height*0.03)) }; composerHighlights.push(active); drawComposerHL(); ev.preventDefault(); ev.stopPropagation(); });
-    overlay.addEventListener('mousemove', ev=>{ if(!drawing||!active||!composerHLMode)return; active.points.push(pt(ev)); drawComposerHL(); });
-    const fin=()=>{ drawing=false; active=null; };
+    const areaColor=()=>{ const a=(document.getElementById('composerArea')||{}).value; return hexToRgba(categoryColor(a), 0.5); };   // 형광펜 색 = 선택한 영역 색
+    overlay.addEventListener('mousedown', ev=>{ if(!composerHLMode)return; drawing=true; startPt=pt(ev); active={ points:[startPt, startPt], color:areaColor(), width:Math.max(14,Math.round(overlay.height*0.03)) }; composerHighlights.push(active); drawComposerHL(); ev.preventDefault(); ev.stopPropagation(); });
+    overlay.addEventListener('mousemove', ev=>{ if(!drawing||!active||!composerHLMode)return; active.points=[startPt, pt(ev)]; drawComposerHL(); });   // 일직선: 시작점 → 현재점
+    const fin=()=>{ drawing=false; active=null; startPt=null; };
     overlay.addEventListener('mouseup', fin); overlay.addEventListener('mouseleave', fin);
     overlay.dataset.bound='1';
   }
