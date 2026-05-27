@@ -269,8 +269,7 @@
     <div id="stepTeacher" style="display:none">
       <div class="lock-icon">🧑‍🏫</div>
       <h2>교사(관리자) 입장</h2>
-      <p>학생(학번)을 선택하고 관리자 코드를 입력하세요.</p>
-      <select id="teacherStudentSelect" style="width:100%; padding:11px 14px; border:1px solid #d0dae6; border-radius:10px; font-size:15px; background:#f7fafd; margin-bottom:12px;"></select>
+      <p>관리자 코드를 입력하면 바로 입장합니다.<br>학생은 입장 후 <b>위쪽 탭</b>에서 선택하세요.</p>
       <input type="password" id="adminCodeInput" placeholder="관리자 코드" autocomplete="off">
       <button class="main-btn" id="teacherEnterBtn">입장하기</button>
       <button type="button" class="link-btn" id="teacherBackBtn" style="margin-top:8px;">← 뒤로</button>
@@ -541,11 +540,8 @@
 
   function ensureCurrentStudent(){
     if(role==='student'){ if(currentStudentId && !students[currentStudentId]) currentStudentId=null; return; }  // 학생은 본인 페이지 고정
-    if(!currentStudentId || !students[currentStudentId]){
-      const ids = Object.keys(students);
-      currentStudentId = ids.length ? ids.sort((a,b)=>students[a].createdAt-students[b].createdAt)[0] : null;
-      docBuiltKey = null;
-    }
+    // 교사: 자동 선택 안 함 — 입장 시 '관리 중인 학생 전체'(위 탭)를 보고 직접 선택. 선택했던 학생이 삭제되면 해제.
+    if(currentStudentId && !students[currentStudentId]){ currentStudentId=null; docBuiltKey=null; }
   }
   function renderMain(){ renderPdfViewer(); renderSectionBar(); renderBoard(); }
   function afterChange(){
@@ -564,12 +560,7 @@
     document.getElementById('stepTeacher').style.display = step==='teacher' ? 'block' : 'none';
     const se=document.getElementById('studentError'), te=document.getElementById('teacherError'); if(se)se.textContent=''; if(te)te.textContent='';
     if(step==='student'){ const i=document.getElementById('studentCodeInput'); i.value=''; setTimeout(()=>{ try{i.focus();}catch(e){} },40); }
-    if(step==='teacher'){ fillTeacherSelect(); document.getElementById('adminCodeInput').value=''; }
-  }
-  function fillTeacherSelect(){
-    const sel=document.getElementById('teacherStudentSelect');
-    const ids=Object.keys(students).sort((a,b)=>students[a].createdAt-students[b].createdAt);
-    sel.innerHTML = ids.map(id=>`<option value="${id}">${escapeHtml(students[id].name||'(학번없음)')}</option>`).join('') + `<option value="__new__">＋ 새 학생(학번) 등록</option>`;
+    if(step==='teacher'){ const a=document.getElementById('adminCodeInput'); a.value=''; setTimeout(()=>{ try{a.focus();}catch(e){} },40); }
   }
   function enterAsStudent(){
     const code=document.getElementById('studentCodeInput').value.trim();
@@ -587,9 +578,8 @@
     role='consultant'; myName='교사';
     ssSet('board_role',role); ssSet('board_name',myName); try{ sessionStorage.removeItem('board_student'); }catch(e){}
     document.getElementById('lockScreen').style.display='none';
-    const pick=document.getElementById('teacherStudentSelect').value;
-    if(pick==='__new__'){ currentStudentId=null; enterBoard(); addStudent(); }
-    else { currentStudentId=pick||null; enterBoard(); }
+    currentStudentId=null;   // 학생은 입장 후 위쪽 탭에서 선택 (없으면 첫 학생 자동 선택)
+    enterBoard();
   }
   function enterBoard(){
     docBuiltKey = null;
@@ -762,7 +752,7 @@
   }
   function renderPdfViewer(){
     const v = document.getElementById('pdfViewer'); if(!v) return;
-    if(!currentStudentId){ v.innerHTML = emptyPdfHtml('학생을 선택해 주세요', ''); v.classList.remove('pdf-scroll'); pdfRenderedFor='__none__'; return; }
+    if(!currentStudentId){ v.innerHTML = emptyPdfHtml('위 탭에서 학생을 선택하세요', ''); v.classList.remove('pdf-scroll'); pdfRenderedFor='__none__'; return; }
     const url = pdfByStudent[currentStudentId] || '';
     const pages = pdfPagesByStudent[currentStudentId] || null;
     const key = currentStudentId + '|' + (pages ? 'img'+pages.length : (url ? 'frame' : '0'));
