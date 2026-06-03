@@ -55,11 +55,6 @@
   .add-student-btn { padding: 9px 16px; border-radius: 10px; border: 1.5px dashed rgba(90,139,191,0.5); background: rgba(255,255,255,0.5); color: #5a8bbf; font-size: 14px; font-weight: 600; cursor: pointer; }
   .add-student-btn:hover { background: white; border-style: solid; }
 
-  .view-toggle { max-width: 1600px; margin: 0 auto 14px; display: inline-flex; background: rgba(255,255,255,0.6); padding: 5px; border-radius: 12px; gap: 4px; }
-  .seg { border: none; background: transparent; padding: 9px 20px; border-radius: 9px; font-size: 14px; font-weight: 700; color: #6c7a89; cursor: pointer; transition: all 0.15s; }
-  .seg:hover { color: #34495e; }
-  .seg.active { background: white; color: #34495e; box-shadow: 0 2px 8px rgba(70,100,140,0.12); }
-
   .toolbar { max-width: 1600px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .btn { padding: 10px 18px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: white; color: #34495e; box-shadow: 0 2px 6px rgba(70,100,140,0.1); }
   .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(70,100,140,0.15); }
@@ -68,24 +63,6 @@
   .filter-section { margin-left: auto; display: flex; gap: 8px; align-items: center; background: white; padding: 6px 12px; border-radius: 10px; box-shadow: 0 2px 6px rgba(70,100,140,0.1); }
   .filter-section label { font-size: 13px; color: #6c7a89; font-weight: 600; }
   .filter-section select { border: none; background: transparent; font-size: 14px; color: #34495e; cursor: pointer; padding: 4px 8px; font-weight: 600; }
-
-  /* 생기부 본문 편집기 */
-  #docView { max-width: 1600px; margin: 0 auto; }
-  .doc-intro { font-size: 13px; color: #5a6b7a; background: rgba(255,255,255,0.55); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; line-height: 1.5; }
-  .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 18px; align-items: start; }
-  .doc-card { border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(70,100,140,0.12); }
-  .doc-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-  .doc-badge { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 10px; color: rgba(0,0,0,0.72); }
-  .editor-tag { font-size: 11px; color: rgba(0,0,0,0.42); margin-left: auto; }
-  .doc-ta { width: 100%; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; padding: 12px 14px; font-size: 14px; font-family: inherit; line-height: 1.7; resize: vertical; min-height: 150px; background: rgba(255,255,255,0.92); }
-  .doc-ta:focus { outline: none; border-color: rgba(90,139,191,0.7); background: white; box-shadow: 0 0 0 3px rgba(90,139,191,0.12); }
-  .doc-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; gap: 10px; flex-wrap: wrap; }
-  .doc-count { font-size: 12px; font-weight: 700; color: #5a6b7a; }
-  .doc-count.over { color: #c0392b; }
-  .doc-foot-right { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6c7a89; }
-  .limit-input { width: 64px; border: 1px solid rgba(0,0,0,0.15); background: white; padding: 4px 6px; border-radius: 6px; font-size: 12px; font-family: inherit; text-align: center; }
-  .copy-btn { background: rgba(255,255,255,0.85); border: 1px solid rgba(0,0,0,0.15); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; color: rgba(0,0,0,0.65); }
-  .copy-btn:hover { background: white; border-color: rgba(0,0,0,0.3); }
 
   .board { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; align-items: start; }
   .memo-group { background: rgba(255,255,255,0.32); border-radius: 16px; padding: 14px; border: 1px solid rgba(255,255,255,0.6); }
@@ -100,9 +77,6 @@
   .memo-image, .comment-image { margin-top: 10px; }
   .memo-image img, .comment-image img { max-width: 100%; border-radius: 8px; cursor: pointer; display: block; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
 
-  .comment { border-radius: 12px; padding: 12px 14px; box-shadow: 0 4px 12px rgba(70,100,140,0.13); word-break: break-word; margin-bottom: 10px; font-size: 13px; }
-  .comment.reply { margin-left: 16px; position: relative; }
-  .comment.reply::before { content: ''; position: absolute; left: -16px; top: -10px; width: 12px; height: 22px; border-left: 2px dashed rgba(90,139,191,0.4); border-bottom: 2px dashed rgba(90,139,191,0.4); border-bottom-left-radius: 8px; }
   .comment-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 8px; }
   .comment-meta { font-size: 11px; color: rgba(0,0,0,0.55); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .comment-author { font-weight: 700; color: rgba(0,0,0,0.78); }
@@ -114,18 +88,12 @@
   .tag-concern { background: #c47d8a; }
   .tag-agree { background: #87b896; }
   .tag-etc { background: #9aa7b4; }
-  .comment-content { color: rgba(0,0,0,0.85); white-space: pre-wrap; line-height: 1.55; }
+  .comment-content { font-size: 14px; color: rgba(0,0,0,0.85); white-space: pre-wrap; line-height: 1.55; }
   .actions { display: flex; gap: 2px; }
   .icon-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: rgba(0,0,0,0.4); padding: 2px 5px; line-height: 1; border-radius: 4px; }
   .icon-btn:hover { color: rgba(0,0,0,0.85); background: rgba(0,0,0,0.08); }
 
-  .reply-btn { background: rgba(90,139,191,0.12); border: 1px solid rgba(90,139,191,0.4); cursor: pointer; font-size: 11px; color: #4a7aae; padding: 5px 12px; font-weight: 700; border-radius: 8px; transition: all 0.15s; margin-top: 6px; }
-  .reply-btn:hover { background: #5a8bbf; color: white; border-color: #5a8bbf; }
-  .add-comment-btn { width: 100%; background: rgba(255,255,255,0.55); border: 1.5px dashed rgba(90,139,191,0.5); border-radius: 10px; padding: 10px; cursor: pointer; color: #5a8bbf; font-size: 13px; font-weight: 600; transition: all 0.15s; }
-  .add-comment-btn:hover { background: rgba(255,255,255,0.85); border-color: #5a8bbf; border-style: solid; }
-
   .comment-form { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(70,100,140,0.15); border: 2px solid rgba(90,139,191,0.4); }
-  .comment-form.reply-form { margin-left: 16px; }
   .form-row-top { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
   .author-input { flex: 1; min-width: 100px; border: 1px solid rgba(0,0,0,0.15); background: white; padding: 5px 8px; border-radius: 6px; font-size: 12px; font-family: inherit; }
   .tag-selector { display: flex; gap: 3px; flex-wrap: wrap; }
@@ -252,7 +220,7 @@
 
   @media (max-width: 600px) {
     body { padding: 16px; }
-    .board, .doc-grid { grid-template-columns: 1fr; }
+    .board { grid-template-columns: 1fr; }
     .toolbar { flex-direction: column; align-items: stretch; }
     .filter-section { margin-left: 0; }
   }
@@ -274,18 +242,20 @@
     <div id="stepStudent" style="display:none">
       <div class="lock-icon">🎓</div>
       <h2>학생 입장</h2>
-      <p>선생님께 받은 <b>내 코드</b>를 입력하세요.</p>
-      <input type="text" id="studentCodeInput" placeholder="내 코드" autocomplete="off">
+      <p>선생님께 받은 <b>개인 링크</b>를 열면 바로 입장됩니다.<br>또는 받은 <b>개인 코드</b>를 아래에 입력하세요.</p>
+      <input type="text" id="studentCodeInput" placeholder="개인 코드" autocomplete="off">
       <button class="main-btn" id="studentEnterBtn">입장하기</button>
       <button type="button" class="link-btn" id="studentBackBtn" style="margin-top:8px;">← 뒤로</button>
       <div class="lock-error" id="studentError"></div>
     </div>
     <div id="stepTeacher" style="display:none">
       <div class="lock-icon">🧑‍🏫</div>
-      <h2>교사(관리자) 입장</h2>
-      <p>관리자 코드를 입력하면 바로 입장합니다.<br>학생은 입장 후 <b>위쪽 탭</b>에서 선택하세요.</p>
-      <input type="password" id="adminCodeInput" placeholder="관리자 코드" autocomplete="off">
-      <button class="main-btn" id="teacherEnterBtn">입장하기</button>
+      <h2>교사 로그인</h2>
+      <p>이메일·비밀번호로 로그인하세요.<br><b>처음이시면 아래 "회원가입"</b>으로 교사 계정을 만드세요.</p>
+      <input type="email" id="teacherEmail" placeholder="이메일" autocomplete="username">
+      <input type="password" id="teacherPw" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
+      <button class="main-btn" id="teacherEnterBtn">로그인</button>
+      <button type="button" class="link-btn" id="teacherSignupBtn" style="margin-top:8px;">처음이세요? → 회원가입(첫 교사 등록)</button>
       <button type="button" class="link-btn" id="teacherBackBtn" style="margin-top:8px;">← 뒤로</button>
       <div class="lock-error" id="teacherError"></div>
     </div>
@@ -414,6 +384,8 @@
       <span class="mm-title" id="mindmapTitle">🧠 마인드맵</span>
       <span class="mm-hint">학생이 의견을 올리면 실시간으로 반영됩니다</span>
       <div class="mm-tools">
+        <button class="mm-tool" onclick="mmCollapseAll(false)" title="모든 리플 가지를 펼칩니다">⊞ 리플 펼치기</button>
+        <button class="mm-tool" onclick="mmCollapseAll(true)" title="모든 리플 가지를 접습니다">⊟ 리플 접기</button>
         <button class="mm-tool" onclick="mmZoom(1.2)" title="확대">＋ 확대</button>
         <button class="mm-tool" onclick="mmZoom(0.83)" title="축소">－ 축소</button>
         <button class="mm-tool" onclick="mmFit()" title="원래 크기">맞춤</button>
@@ -495,8 +467,6 @@
   function getTag(k){ return TAGS[k] || LEGACY_TAGS[k] || TAGS.question; }
 
   const AREAS = ['자율활동','진로활동','동아리활동','봉사활동','교과세특','행동특성','기타'];
-  const AREA_LABELS = { '자율활동':'자율·자치활동','진로활동':'진로활동','동아리활동':'동아리활동','봉사활동':'봉사활동','교과세특':'교과 세부능력 및 특기사항','행동특성':'행동특성 및 종합의견','기타':'기타' };
-  function areaLabel(a){ return AREA_LABELS[a] || a; }
 
   let students = {};   // Firebase 실시간 DB에서 onValue로 채워집니다
 
@@ -504,28 +474,21 @@
   let currentArea = 'all';   // 'all' 또는 영역명
   function ssGet(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }
   function ssSet(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }
-  let role = ssGet('board_role') || null;
-  let myName = ssGet('board_name') || '';
+  function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  function lsDel(k){ try { localStorage.removeItem(k); } catch(e){} }
+  let role = null;     // 'consultant'(교사) | 'student' — 로그인 상태가 결정
+  let myName = '';
 
   let editingMemoId = null;
   let modalImageData = null;
-  let activeReplyTo = null;
   let activeEditComment = null;
   let formState = {};
-  let docBuiltKey = null;
-  let docSaveTimers = {};
 
   function isConsultant(){ return role === 'consultant'; }
-  function roleLabel(){ return role === 'consultant' ? '교사' : '학생'; }
   function canEdit(author){ return !!myName && (author||'').trim() === myName.trim(); }   // 본인이 쓴 의견만 수정
-  const ADMIN_CODE = "yb2026";          // ★ 교사 관리자 코드(= 로그인 비밀번호). 원하는 값으로 바꾸세요.
-  const DELETE_PASSWORD = ADMIN_CODE;   // 의견·캡처 삭제 비밀번호 = 로그인 비밀번호와 동일
-  function passDeleteGate(msg){
-    const pw = prompt((msg?msg+'\n\n':'') + '삭제하려면 비밀번호를 입력하세요.');
-    if(pw===null) return false;
-    if(pw !== DELETE_PASSWORD){ alert('비밀번호가 올바르지 않습니다.'); return false; }
-    return true;
-  }
+  // 삭제 권한은 로그인(교사) + 보안규칙으로 제어. 실수 클릭 방지용 확인창만 둠.
+  function passDeleteGate(msg){ return confirm((msg?msg+'\n\n':'') + '정말 삭제할까요? 되돌릴 수 없습니다.'); }
 
   /* ---------- Firebase 실시간 DB 연결 ---------- */
   const firebaseConfig = {
@@ -551,29 +514,48 @@
   function push(r){ return r.push(); }
   const studentsRef = ref(null, 'students');
   fdb.ref('.info/connected').on('value', function(s){ setConn(!!s.val()); });
-  // 실시간 구독: 누가 바꾸든 모든 기기에 자동 반영
-  var _studentsSubscribed = false;
-  function subscribeStudents(){
-    if(_studentsSubscribed) return; _studentsSubscribed = true;
+
+  const auth = firebase.auth ? firebase.auth() : null;
+  let teacherUid = null;          // config/teacherUid (등록된 단 하나의 교사)
+  let studentSubRef = null;       // 학생: 자기 노드 하나만 구독
+  let allSubscribed = false;      // 교사: 전체 students 구독 여부
+
+  // 교사용: 전체 students 구독 (보안규칙상 교사 계정만 읽힘)
+  function subscribeAllStudents(){
+    if(allSubscribed) return; allSubscribed = true;
     studentsRef.on('value', function(snap){ students = snap.val() || {}; afterChange(); }, function(err){ console.error(err); setConn(false); });
   }
-  // 익명 로그인: 보안 규칙을 auth!=null로 잠가도 앱은 작동(주소만 아는 외부 raw 접근은 차단).
-  // 콘솔에서 '익명' 로그인을 켜야 동작. 아직 안 켰거나 개방 규칙이면 폴백으로 그대로 구독.
-  if(firebase.auth){
-    firebase.auth().onAuthStateChanged(function(user){ if(user) subscribeStudents(); });
-    firebase.auth().signInAnonymously().catch(function(e){
-      console.warn('익명 로그인 실패(콘솔에서 익명 로그인 사용 설정 필요). 개방 규칙이면 폴백으로 작동:', e && e.code);
-      subscribeStudents();
-      if(typeof toast==='function') toast('익명 로그인이 꺼져 있어요 — Firebase 콘솔 Authentication에서 "익명"을 켜주세요');
-    });
-  } else {
-    subscribeStudents();
+  // 학생용: 자기 노드 하나만 구독 (다른 학생 목록은 아예 못 불러옴)
+  function subscribeOneStudent(token){
+    if(studentSubRef){ try{ studentSubRef.off(); }catch(e){} }
+    studentSubRef = fdb.ref('students/'+token);
+    studentSubRef.on('value', function(snap){
+      const v = snap.val();
+      students = v ? { [token]: v } : {};
+      if(!v) currentStudentId = null;
+      afterChange();
+    }, function(err){ console.error(err); setConn(false); });
   }
+  function unsubscribeAll(){
+    try{ studentsRef.off(); }catch(e){} allSubscribed=false;
+    if(studentSubRef){ try{ studentSubRef.off(); }catch(e){} studentSubRef=null; }
+  }
+  // 익명 로그인 보장 (학생/로그인 전 공통). 교사 로그인 시 이 익명 세션은 교체됨.
+  function ensureAnonAuth(){
+    if(!auth) return Promise.resolve(null);
+    if(auth.currentUser) return Promise.resolve(auth.currentUser);
+    return auth.signInAnonymously().then(function(c){ return c.user; }).catch(function(e){
+      console.warn('익명 로그인 실패:', e && e.code);
+      if(typeof toast==='function') toast('로그인 준비 실패 — 인터넷/Firebase 설정을 확인해 주세요');
+      return null;
+    });
+  }
+  function getTeacherUid(){ return fdb.ref('config/teacherUid').once('value').then(function(s){ return s.val(); }); }
 
   function ensureCurrentStudent(){
     if(role==='student'){ if(currentStudentId && !students[currentStudentId]) currentStudentId=null; return; }  // 학생은 본인 페이지 고정
     // 교사: 자동 선택 안 함 — 입장 시 '관리 중인 학생 전체'(위 탭)를 보고 직접 선택. 선택했던 학생이 삭제되면 해제.
-    if(currentStudentId && !students[currentStudentId]){ currentStudentId=null; docBuiltKey=null; }
+    if(currentStudentId && !students[currentStudentId]){ currentStudentId=null; }
   }
   function renderMain(){ renderPdfViewer(); renderSectionBar(); renderBoard(); }
   function afterChange(){
@@ -585,37 +567,78 @@
   }
   function setConn(on){ const d=document.getElementById('connDot'),t=document.getElementById('connText'); if(!d||!t) return; if(on){ d.className='conn-dot online'; t.textContent='실시간 연결됨'; } else { d.className='conn-dot offline'; t.textContent='연결 끊김 (인터넷 확인)'; } }
 
-  /* ---------- 입장 (학생: 내 코드 / 교사: 관리자 코드) ---------- */
-  // ADMIN_CODE는 위쪽(삭제 비밀번호 옆)에서 한 번에 선언 → 로그인 비번과 삭제 비번 통합
+  /* ---------- 입장 (학생: 개인 코드/링크 / 교사: 이메일 로그인) ---------- */
   function showStep(step){
     document.getElementById('stepRole').style.display = step==='role' ? 'block' : 'none';
     document.getElementById('stepStudent').style.display = step==='student' ? 'block' : 'none';
     document.getElementById('stepTeacher').style.display = step==='teacher' ? 'block' : 'none';
     const se=document.getElementById('studentError'), te=document.getElementById('teacherError'); if(se)se.textContent=''; if(te)te.textContent='';
     if(step==='student'){ const i=document.getElementById('studentCodeInput'); i.value=''; setTimeout(()=>{ try{i.focus();}catch(e){} },40); }
-    if(step==='teacher'){ const a=document.getElementById('adminCodeInput'); a.value=''; setTimeout(()=>{ try{a.focus();}catch(e){} },40); }
+    if(step==='teacher'){ const a=document.getElementById('teacherEmail'); if(a) setTimeout(()=>{ try{a.focus();}catch(e){} },40); }
   }
-  function enterAsStudent(){
-    const code=document.getElementById('studentCodeInput').value.trim();
-    if(!code){ document.getElementById('studentError').textContent='코드를 입력해 주세요.'; return; }
-    const id=Object.keys(students).find(k=>(students[k].code||'')===code);
-    if(!id){ document.getElementById('studentError').textContent='코드가 올바르지 않습니다.'; return; }
-    role='student'; myName=students[id].name||'학생'; currentStudentId=id;
-    ssSet('board_role',role); ssSet('board_name',myName); ssSet('board_student',id);
+  function studentErr(m){ const el=document.getElementById('studentError'); if(el) el.textContent=m||''; }
+  function teacherErr(m){ const el=document.getElementById('teacherError'); if(el) el.textContent=m||''; }
+  // ---- 학생: 개인 코드(=자기 노드 키)로 본인 페이지만 ----
+  async function enterStudent(token){
+    token=(token||'').trim();
+    if(!token){ studentErr('개인 코드를 입력해 주세요.'); return; }
+    studentErr('확인 중…');
+    await ensureAnonAuth();
+    try{
+      const snap = await fdb.ref('students/'+token).once('value');
+      const v = snap.val();
+      if(!v){ studentErr('코드가 올바르지 않습니다. 선생님께 받은 코드/링크를 확인해 주세요.'); return; }
+      role='student'; myName=v.name||'학생'; currentStudentId=token;
+      students = { [token]: v };
+      lsSet('board_student_token', token);
+      subscribeOneStudent(token);
+      studentErr('');
+      document.getElementById('lockScreen').style.display='none';
+      enterBoard();
+    }catch(e){ studentErr('입장 실패: '+((e&&e.message)||e)); }
+  }
+  // ---- 교사: 이메일/비밀번호 로그인 (처음이면 회원가입=최초 교사 등록) ----
+  async function teacherAuthSubmit(isSignup){
+    if(!auth){ teacherErr('인증 모듈을 불러오지 못했습니다. 새로고침해 주세요.'); return; }
+    const email=(document.getElementById('teacherEmail').value||'').trim();
+    const pw=document.getElementById('teacherPw').value||'';
+    if(!email || !pw){ teacherErr('이메일과 비밀번호를 입력해 주세요.'); return; }
+    if(isSignup && pw.length<6){ teacherErr('비밀번호는 6자 이상이어야 합니다.'); return; }
+    teacherErr('처리 중…');
+    try{
+      const cred = isSignup ? await auth.createUserWithEmailAndPassword(email,pw)
+                            : await auth.signInWithEmailAndPassword(email,pw);
+      await enterTeacher(cred.user);
+    }catch(e){ teacherErr(authErrMsg(e)); }
+  }
+  async function enterTeacher(user){
+    if(role==='consultant') return;   // 이미 교사로 입장됨(중복 방지)
+    let tid = await getTeacherUid();
+    if(!tid){ try{ await fdb.ref('config/teacherUid').set(user.uid); tid=user.uid; }catch(e){ tid=await getTeacherUid(); } }
+    if(tid && tid!==user.uid){
+      teacherErr('이미 다른 교사 계정이 등록되어 있습니다. 그 계정으로 로그인해 주세요.');
+      try{ await auth.signOut(); }catch(e){}
+      await ensureAnonAuth();
+      document.getElementById('lockScreen').style.display='flex'; showStep('teacher');
+      return;
+    }
+    teacherUid=tid; role='consultant'; myName='교사'; currentStudentId=null;
+    subscribeAllStudents();
+    teacherErr('');
     document.getElementById('lockScreen').style.display='none';
     enterBoard();
   }
-  function enterAsTeacher(){
-    const adminCode=document.getElementById('adminCodeInput').value.trim();
-    if(adminCode!==ADMIN_CODE){ document.getElementById('teacherError').textContent='관리자 코드가 올바르지 않습니다.'; return; }
-    role='consultant'; myName='교사';
-    ssSet('board_role',role); ssSet('board_name',myName); try{ sessionStorage.removeItem('board_student'); }catch(e){}
-    document.getElementById('lockScreen').style.display='none';
-    currentStudentId=null;   // 학생은 입장 후 위쪽 탭에서 선택 (없으면 첫 학생 자동 선택)
-    enterBoard();
+  function authErrMsg(e){
+    const c=(e&&e.code)||'';
+    if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found') return '이메일 또는 비밀번호가 올바르지 않습니다. (처음이면 아래 "회원가입"을 누르세요)';
+    if(c==='auth/email-already-in-use') return '이미 가입된 이메일입니다. "로그인"으로 들어가세요.';
+    if(c==='auth/invalid-email') return '이메일 형식이 올바르지 않습니다.';
+    if(c==='auth/weak-password') return '비밀번호는 6자 이상이어야 합니다.';
+    if(c==='auth/network-request-failed') return '네트워크 오류 — 인터넷 연결을 확인해 주세요.';
+    if(c==='auth/operation-not-allowed') return 'Firebase에서 이메일/비밀번호 로그인이 꺼져 있습니다. 콘솔에서 켜주세요.';
+    return '오류: '+(c||(e&&e.message)||'알 수 없음');
   }
   function enterBoard(){
-    docBuiltKey = null;
     setMeBar();
     ensureCurrentStudent();
     renderTabs();
@@ -633,11 +656,16 @@
   document.querySelectorAll('.role-opt').forEach(b=>{ b.addEventListener('click', ()=>showStep(b.dataset.go)); });
   document.getElementById('studentBackBtn').addEventListener('click', ()=>showStep('role'));
   document.getElementById('teacherBackBtn').addEventListener('click', ()=>showStep('role'));
-  document.getElementById('studentEnterBtn').addEventListener('click', enterAsStudent);
-  document.getElementById('studentCodeInput').addEventListener('keydown', e=>{ if(e.key==='Enter') enterAsStudent(); });
-  document.getElementById('teacherEnterBtn').addEventListener('click', enterAsTeacher);
-  document.getElementById('adminCodeInput').addEventListener('keydown', e=>{ if(e.key==='Enter') enterAsTeacher(); });
-  document.getElementById('changeRoleBtn').addEventListener('click', ()=>{
+  document.getElementById('studentEnterBtn').addEventListener('click', ()=>enterStudent(document.getElementById('studentCodeInput').value));
+  document.getElementById('studentCodeInput').addEventListener('keydown', e=>{ if(e.key==='Enter') enterStudent(e.target.value); });
+  document.getElementById('teacherEnterBtn').addEventListener('click', ()=>teacherAuthSubmit(false));
+  document.getElementById('teacherSignupBtn').addEventListener('click', ()=>teacherAuthSubmit(true));
+  document.getElementById('teacherPw').addEventListener('keydown', e=>{ if(e.key==='Enter') teacherAuthSubmit(false); });
+  document.getElementById('changeRoleBtn').addEventListener('click', async ()=>{
+    try{ if(auth && auth.currentUser && !auth.currentUser.isAnonymous) await auth.signOut(); }catch(e){}
+    lsDel('board_student_token'); unsubscribeAll();
+    role=null; myName=''; currentStudentId=null; students={}; teacherUid=null;
+    await ensureAnonAuth();
     document.getElementById('lockScreen').style.display='flex';
     showStep('role');
   });
@@ -673,7 +701,7 @@
   document.getElementById('importFile').addEventListener('change', importData);
 
   /* ---------- 학생 탭 ---------- */
-  function genCode(){ return String(Math.floor(1000+Math.random()*9000)); }
+  function studentLink(id){ return location.origin + location.pathname + '?s=' + id; }
   function renderTabs(){
     const wrap = document.getElementById('studentTabs');
     if(role==='student'){
@@ -683,8 +711,7 @@
     }
     const ids = Object.keys(students).sort((a,b)=>students[a].createdAt-students[b].createdAt);
     let html = ids.map(id=>{
-      const hasCode = !!students[id].code;
-      const key = `<span onclick="event.stopPropagation(); showStudentCode('${id}')" title="학생 코드 보기/설정" style="cursor:pointer; font-size:11px; padding:0 2px;">${hasCode?'🔑':'🔑❗'}</span>`;
+      const key = `<span onclick="event.stopPropagation(); showStudentLink('${id}')" title="이 학생의 개인 접속 링크/코드 보기" style="cursor:pointer; font-size:11px; padding:0 2px;">🔗</span>`;
       const clean = `<span onclick="event.stopPropagation(); clearStudentCaptures('${id}')" title="컨설팅 종료 시: 캡처·사진 이미지만 서버에서 삭제 (글 의견은 보존)" style="cursor:pointer; font-size:11px; padding:0 2px;">🧹</span>`;
       const del = `<span class="tab-del" onclick="event.stopPropagation(); deleteStudent('${id}')" title="이 학생 페이지 전체 삭제 (의견까지 모두)">✕</span>`;
       return `<button class="student-tab ${id===currentStudentId?'active':''}" onclick="selectStudent('${id}')">${escapeHtml(students[id].name||'학번없음')}${key}${clean}${del}</button>`;
@@ -692,27 +719,26 @@
     html += `<button class="add-student-btn" onclick="addStudent()">＋ 새 학생(학번) 추가</button>`;
     wrap.innerHTML = html;
   }
-  window.selectStudent = function(id){ if(role==='student') return; currentStudentId=id; activeReplyTo=null; activeEditComment=null; docBuiltKey=null; renderTabs(); renderAreaTabs(); renderMain(); };
+  window.selectStudent = function(id){ if(role==='student') return; currentStudentId=id; activeEditComment=null; renderTabs(); renderAreaTabs(); renderMain(); };
   window.addStudent = function(){
-    if(!isConsultant()){ alert('학생 추가는 교사(관리자)만 가능합니다.'); return; }
+    if(!isConsultant()){ alert('학생 추가는 교사만 가능합니다.'); return; }
     const no = prompt('새 학생의 학번(또는 구분명)을 입력하세요.\n예: 10125, 1-3-15 등 (이름 대신 학번 권장)');
     if (no===null) return;
     const t = no.trim(); if(!t){ alert('학번을 입력해 주세요.'); return; }
-    let code=genCode(); while(Object.keys(students).some(k=>(students[k].code||'')===code)) code=genCode();
     const r = push(studentsRef);
-    set(r, { name:t, code:code, createdAt:Date.now(), memos:{} }).then(()=>{ currentStudentId=r.key; docBuiltKey=null; renderTabs(); renderAreaTabs(); renderMain(); alert(`학생 '${t}' 추가 완료.\n\n이 학생의 코드: ${code}\n\n학생에게 이 코드를 알려주세요. 학생은 입장 화면 '🎓 학생'에서 이 코드를 입력하면 본인 페이지로 들어갑니다.`); });
+    set(r, { name:t, createdAt:Date.now(), memos:{} }).then(()=>{
+      currentStudentId=r.key; renderTabs(); renderAreaTabs(); renderMain();
+      showStudentLink(r.key);
+    }).catch(e=>alert('추가 실패: '+e.message));
   };
-  window.showStudentCode = function(id){
+  window.showStudentLink = function(id){
     if(!isConsultant()) return;
-    const s=students[id]; if(!s) return;
-    const cur=s.code||'';
-    const inp = prompt(`'${s.name}' 학생에게 줄 코드입니다.\n학생은 이 코드로 본인 페이지에 입장합니다.\n\n바꾸려면 새 코드 입력 후 확인, 그대로 두려면 확인:`, cur||genCode());
-    if(inp===null) return;
-    const code=inp.trim();
-    if(!code){ alert('코드를 입력해 주세요.'); return; }
-    if(Object.keys(students).some(k=>k!==id && (students[k].code||'')===code)){ alert('이미 다른 학생이 쓰는 코드입니다. 다른 코드로 해주세요.'); return; }
-    update(ref(null,`students/${id}`), { code });
-    toast('코드 저장됨: '+code);
+    const s=students[id]; const name = s ? (s.name||'학생') : '학생';
+    const link = studentLink(id);
+    prompt(
+      `'${name}' 학생의 개인 접속 정보입니다. 그 학생에게만 보내세요.\n\n• 링크(권장): 아래 칸 전체를 복사해 전달 → 학생이 열면 본인 페이지로 바로 입장\n• 코드만: 입장화면 '🎓 학생'에서 아래 코드를 입력\n\n[개인 코드] ${id}\n\n※ 이 코드/링크는 비밀번호와 같습니다. 다른 사람에게 노출되지 않게 하세요.`,
+      link
+    );
   };
   window.deleteStudent = function(id){
     if(!isConsultant()){ alert('삭제는 교사(관리자)만 가능합니다.'); return; }
@@ -746,7 +772,7 @@
       return `<button class="area-tab ${t.key===currentArea?'active':''}" onclick="selectArea('${t.key}')">${dot}${escapeHtml(t.label)}</button>`;
     }).join('');
   }
-  window.selectArea = function(area){ currentArea=area; docBuiltKey=null; renderAreaTabs(); syncComposerArea(); renderMain(); };
+  window.selectArea = function(area){ currentArea=area; renderAreaTabs(); syncComposerArea(); renderMain(); };
 
   /* ---------- 생기부 원본 PDF 뷰어 (왼쪽 패널, 브라우저 내장 뷰어) ---------- */
   /* pdf.js로 페이지를 이미지로 렌더 → 항목 클릭 시 해당 쪽으로 스크롤. 렌더 실패 시 기본 PDF 뷰어(iframe)로 폴백. */
@@ -960,7 +986,8 @@
   }
   function renderMemo(memo){
     const bg = memo.category ? categoryColor(memo.category) : '#FFFFFF';
-    const actions = `<div class="actions">${canEdit(memo.author)?`<button class="icon-btn" onclick="editMemo('${memo.id}')" title="수정(본인 글)">✎</button>`:''}<button class="icon-btn" onclick="deleteMemo('${memo.id}')" title="삭제(비밀번호 필요)">✕</button></div>`;
+    const canDel = isConsultant() || canEdit(memo.author);
+    const actions = `<div class="actions">${canEdit(memo.author)?`<button class="icon-btn" onclick="editMemo('${memo.id}')" title="수정(본인 글)">✎</button>`:''}${canDel?`<button class="icon-btn" onclick="deleteMemo('${memo.id}')" title="삭제">✕</button>`:''}</div>`;
     return `
       <div class="memo" style="background:${bg}">
         <div class="memo-header">
@@ -981,7 +1008,8 @@
     const tag = getTag(comment.tag);
     const areaColor = categoryColor(memoCat);
     const replyBg = lightenColor(areaColor, 0.5);
-    const actions = `<div class="actions">${canEdit(comment.author)?`<button class="icon-btn" onclick="startEditComment('${memoId}','${comment.id}')" title="수정(본인 글)">✎</button>`:''}<button class="icon-btn" onclick="deleteComment('${memoId}','${comment.id}')" title="삭제(비밀번호 필요)">✕</button></div>`;
+    const canDelC = isConsultant() || canEdit(comment.author);
+    const actions = `<div class="actions">${canEdit(comment.author)?`<button class="icon-btn" onclick="startEditComment('${memoId}','${comment.id}')" title="수정(본인 글)">✎</button>`:''}${canDelC?`<button class="icon-btn" onclick="deleteComment('${memoId}','${comment.id}')" title="삭제">✕</button>`:''}</div>`;
     return `
       <div class="reply-card" style="background:${replyBg}; border-left:4px solid ${areaColor}">
         <span class="reply-link" title="리플 (의견에 대한 의견)">🔗</span>
@@ -1287,7 +1315,7 @@
 
   /* ---------- 마인드맵 뷰 (협업보드 → 실시간 트리) ---------- */
   const MM_NS = 'http://www.w3.org/2000/svg';
-  let __mmOpen = false, __mmZoom = 1, __mmMeasureCtx = null;
+  let __mmOpen = false, __mmZoom = 1, __mmMeasureCtx = null, __mmCollapsed = new Set();
   function mmTrunc(s, n){ s=(s||'').replace(/\s+/g,' ').trim(); return s.length>n ? s.slice(0,n-1)+'…' : s; }
   function mmMeasure(text, font){ if(!__mmMeasureCtx){ __mmMeasureCtx=document.createElement('canvas').getContext('2d'); } __mmMeasureCtx.font=font; return __mmMeasureCtx.measureText(text).width; }
   function mmFontOf(kind){ return kind==='root' ? '700 16px "Apple SD Gothic Neo","Malgun Gothic",sans-serif' : kind==='area' ? '700 14px "Apple SD Gothic Neo","Malgun Gothic",sans-serif' : '600 13px "Apple SD Gothic Neo","Malgun Gothic",sans-serif'; }
@@ -1299,12 +1327,21 @@
     memos.forEach(m=>{ const c=m.category||'기타'; (byArea[c]=byArea[c]||[]).push(m); });
     const areaKeys = AREAS.filter(a=>byArea[a]&&byArea[a].length).concat(Object.keys(byArea).filter(c=>!AREAS.includes(c)));
     const root = { label: (st.name||'학생'), kind:'root', color:'#2c3e50', children:[] };
+    const makeReplyNode = (area, c)=>{
+      const tag = getTag(c.tag||'etc');
+      const emoji = (tag.label.split(' ')[0]||'');
+      const body = mmTrunc(c.text || (c.image?'[사진]':'(내용 없음)'), 20);
+      return { label:(emoji+' '+body).trim(), kind:'reply', color:categoryColor(area), full:(c.text||'') };
+    };
     const makeMemoNode = (area, m)=>{
       const tag = getTag(m.tag||'etc');
-      const rc = Object.keys(m.comments||{}).length;
       const emoji = (tag.label.split(' ')[0]||'');
       const body = mmTrunc(m.content || (m.image?'[캡처/사진]':'(내용 없음)'), 22);
-      return { label:(emoji+' '+body).trim(), kind:'memo', color:categoryColor(area), badge: rc?('💬'+rc):'', full:(m.content||'') };
+      const cObj = m.comments||{};
+      const replies = Object.keys(cObj).map(id=>({id,...cObj[id]})).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      const node = { id:m.id, label:(emoji+' '+body).trim(), kind:'memo', color:categoryColor(area), full:(m.content||''), replyCount:replies.length };
+      if(replies.length && !__mmCollapsed.has(m.id)){ node.children = replies.map(c=>makeReplyNode(area,c)); }   // 펼친 상태면 리플을 가지로
+      return node;
     };
     areaKeys.forEach(area=>{
       const list = byArea[area].slice().sort((a,b)=>a.createdAt-b.createdAt);
@@ -1360,23 +1397,43 @@
     svg.appendChild(edges);
     (function drawNode(node){
       const g=document.createElementNS(MM_NS,'g');
+      const lighten = node.kind==='memo'?0.4 : node.kind==='reply'?0.58 : 0.12;
       const rect=document.createElementNS(MM_NS,'rect');
       rect.setAttribute('x',node.x); rect.setAttribute('y',node.y-15); rect.setAttribute('width',node.w); rect.setAttribute('height',30); rect.setAttribute('rx',9);
-      rect.setAttribute('fill', node.kind==='root' ? '#2c3e50' : lightenColor(node.color||'#ffffff', node.kind==='memo'?0.4:0.12));
+      rect.setAttribute('fill', node.kind==='root' ? '#2c3e50' : lightenColor(node.color||'#ffffff', lighten));
       rect.setAttribute('stroke', node.kind==='root' ? '#2c3e50' : (node.color||'#ccc'));
-      rect.setAttribute('stroke-width', node.kind==='root' ? '1' : '1.4');
+      rect.setAttribute('stroke-width', node.kind==='root' ? '1' : node.kind==='reply' ? '1' : '1.4');
+      if(node.kind==='reply') rect.setAttribute('stroke-dasharray','3 3');   // 리플은 점선 테두리로 구분
       g.appendChild(rect);
       const text=document.createElementNS(MM_NS,'text');
       text.setAttribute('x', node.x+node.w/2); text.setAttribute('y', node.y);
       text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','central');
       text.setAttribute('font-size', node.kind==='root'?16:node.kind==='area'?14:13);
-      text.setAttribute('font-weight', (node.kind==='memo'||node.kind==='subject')?'600':'700');
+      text.setAttribute('font-weight', (node.kind==='memo'||node.kind==='subject'||node.kind==='reply')?'600':'700');
       text.setAttribute('font-family','"Apple SD Gothic Neo","Malgun Gothic",sans-serif');
       text.setAttribute('fill', node.kind==='root'?'#ffffff':'#2c3e50');
-      text.textContent = node.label + (node.badge?('  '+node.badge):'');
+      text.textContent = node.label;
       if(node.full){ const t=document.createElementNS(MM_NS,'title'); t.textContent=node.full; g.appendChild(t); }
       g.appendChild(text);
       svg.appendChild(g);
+      // 리플 접기/펼치기 핸들 (리플 있는 의견 노드 우측에 동그라미: 펼침 '−' / 접힘 '+N')
+      if(node.kind==='memo' && node.replyCount){
+        const collapsed=__mmCollapsed.has(node.id), cx=node.x+node.w, cy=node.y;
+        const tg=document.createElementNS(MM_NS,'g'); tg.style.cursor='pointer';
+        const circ=document.createElementNS(MM_NS,'circle');
+        circ.setAttribute('cx',cx); circ.setAttribute('cy',cy); circ.setAttribute('r',9);
+        circ.setAttribute('fill','#ffffff'); circ.setAttribute('stroke',node.color||'#888'); circ.setAttribute('stroke-width','1.6');
+        tg.appendChild(circ);
+        const tx=document.createElementNS(MM_NS,'text');
+        tx.setAttribute('x',cx); tx.setAttribute('y',cy+0.5); tx.setAttribute('text-anchor','middle'); tx.setAttribute('dominant-baseline','central');
+        tx.setAttribute('font-size', collapsed?9:13); tx.setAttribute('font-weight','800'); tx.setAttribute('font-family','sans-serif'); tx.setAttribute('fill','#34495e');
+        tx.textContent = collapsed ? ('+'+node.replyCount) : '−';
+        tg.appendChild(tx);
+        const tt=document.createElementNS(MM_NS,'title'); tt.textContent= collapsed ? ('리플 '+node.replyCount+'개 펼치기') : '리플 접기'; tg.appendChild(tt);
+        const id=node.id;
+        tg.addEventListener('click', function(e){ e.stopPropagation(); window.mmToggle(id); });
+        svg.appendChild(tg);
+      }
       (node.children||[]).forEach(drawNode);
     })(root);
     return svg;
@@ -1401,6 +1458,8 @@
   window.closeMindmap = function(){ __mmOpen=false; document.getElementById('mindmapOverlay').style.display='none'; };
   window.mmZoom = function(f){ __mmZoom=Math.max(0.4, Math.min(2.4, __mmZoom*f)); const s=document.querySelector('#mindmapCanvas svg'); if(s) s.style.transform=`scale(${__mmZoom})`; };
   window.mmFit = function(){ __mmZoom=1; const s=document.querySelector('#mindmapCanvas svg'); if(s) s.style.transform='scale(1)'; };
+  window.mmToggle = function(id){ if(__mmCollapsed.has(id)) __mmCollapsed.delete(id); else __mmCollapsed.add(id); renderMindmap(); };
+  window.mmCollapseAll = function(all){ __mmCollapsed = new Set(); if(all){ const mo=currentMemos(); Object.keys(mo).forEach(mid=>{ if(Object.keys((mo[mid].comments)||{}).length) __mmCollapsed.add(mid); }); } renderMindmap(); };
   window.mmExportPng = function(){
     const svg=document.querySelector('#mindmapCanvas svg'); if(!svg){ alert('내보낼 마인드맵이 없습니다.'); return; }
     const w=+svg.getAttribute('width'), h=+svg.getAttribute('height');
@@ -1415,17 +1474,24 @@
   document.getElementById('mindmapBtn').addEventListener('click', window.openMindmap);
   document.addEventListener('keydown', e=>{ if(e.key==='Escape' && __mmOpen) closeMindmap(); });
 
-  /* ---------- 초기화 ---------- */
-  if (role==='student' && myName) {
-    const sid=ssGet('board_student'); if(sid) currentStudentId=sid;
-    document.getElementById('lockScreen').style.display='none';
-    enterBoard();
-  } else if (role==='consultant' && myName) {
-    document.getElementById('lockScreen').style.display='none';
-    enterBoard();
-  } else {
-    showStep('role');
-  }
+  /* ---------- 초기화 (로그인 상태로 역할 자동 복원) ---------- */
+  (function init(){
+    const urlToken = new URLSearchParams(location.search).get('s');
+    if(!auth){ showStep('role'); return; }
+    let restored=false;
+    auth.onAuthStateChanged(function(user){
+      if(!user){ ensureAnonAuth(); return; }   // 로그인 없음 → 익명 로그인 시작(다시 호출됨)
+      if(restored || role) return;              // 자동 복원은 최초 1회만
+      restored=true;
+      if(!user.isAnonymous){                    // 교사 세션 복원
+        enterTeacher(user).catch(function(){ document.getElementById('lockScreen').style.display='flex'; showStep('role'); });
+        return;
+      }
+      const token = urlToken || lsGet('board_student_token');   // 학생: 링크/저장된 코드
+      if(token){ enterStudent(token); } else { showStep('role'); }
+    });
+    ensureAnonAuth();
+  })();
 </script>
 
 </body>
