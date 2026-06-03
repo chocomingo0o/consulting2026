@@ -199,6 +199,20 @@
   .cap-edit-stage { max-height: 300px; overflow: auto; border-radius: 8px; background: #f4f7fb; padding: 6px; text-align: center; }
   .cap-edit-wrap { position: relative; display: inline-block; }
   .cap-edit-img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
+  /* 마인드맵 뷰 (전체화면) */
+  .mm-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(20,28,40,0.55); backdrop-filter: blur(2px); display: none; }
+  .mm-panel { position: absolute; inset: 22px; background: #f7faff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.32); display: flex; flex-direction: column; overflow: hidden; }
+  .mm-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; background: #fff; flex-wrap: wrap; }
+  .mm-title { font-size: 16px; font-weight: 800; color: #2c3e50; }
+  .mm-hint { font-size: 12px; color: #8aa0b6; }
+  .mm-tools { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .mm-tool { border: 1px solid #cdd8e6; background: #fff; border-radius: 9px; padding: 7px 11px; font-size: 13px; font-weight: 600; color: #34495e; cursor: pointer; }
+  .mm-tool:hover { background: #eef4fb; }
+  .mm-close { border: none; background: #e74c3c; color: #fff; border-radius: 9px; padding: 7px 13px; font-weight: 700; cursor: pointer; }
+  .mm-close:hover { background: #d6402f; }
+  .mm-canvas { flex: 1; overflow: auto; padding: 20px; background-color: #fbfdff; background-image: linear-gradient(#eef3f9 1px, transparent 1px), linear-gradient(90deg, #eef3f9 1px, transparent 1px); background-size: 24px 24px; }
+  .mm-canvas svg { display: block; transform-origin: top left; }
+  .mm-empty { color: #8aa0b6; text-align: center; padding: 64px 20px; line-height: 1.7; font-size: 15px; }
   .cap-edit-overlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
   .cap-edit-stage.hl .cap-edit-overlay { pointer-events: auto; cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Crect x='10' y='2' width='10' height='14' rx='2' fill='%23ffe14d' stroke='%23555' stroke-width='1.3'/%3E%3Cpolygon points='11,16 19,16 15,25' fill='%23fff6c2' stroke='%23555' stroke-width='1.3'/%3E%3C/svg%3E") 15 25, crosshair; }
   .section-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
@@ -325,6 +339,7 @@
     <div class="pane-head">
       <span>📌 포스트잇</span>
       <div class="pane-head-tools">
+        <button class="btn btn-sm" id="mindmapBtn" title="이 학생의 의견을 마인드맵으로 한눈에 보기 (실시간)">🧠 마인드맵</button>
         <div class="filter-section" style="margin-left:0; padding:5px 10px;">
           <label>유형 보기:</label>
           <select id="filterTag">
@@ -392,6 +407,23 @@
 </div>
 
 <div class="img-lightbox" id="imgLightbox"><img id="imgLightboxImg" src="" alt="확대 이미지"></div>
+
+<div class="mm-overlay" id="mindmapOverlay">
+  <div class="mm-panel">
+    <div class="mm-head">
+      <span class="mm-title" id="mindmapTitle">🧠 마인드맵</span>
+      <span class="mm-hint">학생이 의견을 올리면 실시간으로 반영됩니다</span>
+      <div class="mm-tools">
+        <button class="mm-tool" onclick="mmZoom(1.2)" title="확대">＋ 확대</button>
+        <button class="mm-tool" onclick="mmZoom(0.83)" title="축소">－ 축소</button>
+        <button class="mm-tool" onclick="mmFit()" title="원래 크기">맞춤</button>
+        <button class="mm-tool" onclick="mmExportPng()" title="PNG 이미지로 저장">🖼 이미지 저장</button>
+        <button class="mm-close" onclick="closeMindmap()">✕ 닫기</button>
+      </div>
+    </div>
+    <div class="mm-canvas" id="mindmapCanvas"></div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="modal">
   <div class="modal">
@@ -549,6 +581,7 @@
     renderTabs();
     renderAreaTabs();
     renderMain();
+    if(__mmOpen) renderMindmap();   // 마인드맵이 열려 있으면 실시간 갱신
   }
   function setConn(on){ const d=document.getElementById('connDot'),t=document.getElementById('connText'); if(!d||!t) return; if(on){ d.className='conn-dot online'; t.textContent='실시간 연결됨'; } else { d.className='conn-dot offline'; t.textContent='연결 끊김 (인터넷 확인)'; } }
 
@@ -1251,6 +1284,136 @@
   function escapeHtml(t){ if(!t&&t!=='')return ''; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
   function formatDate(ts){ if(!ts) return ''; const d=new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
   function toast(msg){ let t=document.getElementById('toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); } t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1600); }
+
+  /* ---------- 마인드맵 뷰 (협업보드 → 실시간 트리) ---------- */
+  const MM_NS = 'http://www.w3.org/2000/svg';
+  let __mmOpen = false, __mmZoom = 1, __mmMeasureCtx = null;
+  function mmTrunc(s, n){ s=(s||'').replace(/\s+/g,' ').trim(); return s.length>n ? s.slice(0,n-1)+'…' : s; }
+  function mmMeasure(text, font){ if(!__mmMeasureCtx){ __mmMeasureCtx=document.createElement('canvas').getContext('2d'); } __mmMeasureCtx.font=font; return __mmMeasureCtx.measureText(text).width; }
+  function mmFontOf(kind){ return kind==='root' ? '700 16px "Apple SD Gothic Neo","Malgun Gothic",sans-serif' : kind==='area' ? '700 14px "Apple SD Gothic Neo","Malgun Gothic",sans-serif' : '600 13px "Apple SD Gothic Neo","Malgun Gothic",sans-serif'; }
+  function buildMindTree(){
+    const st = students[currentStudentId] || {};
+    const memosObj = currentMemos();
+    const memos = Object.keys(memosObj).map(id=>({id,...memosObj[id]}));
+    const byArea = {};
+    memos.forEach(m=>{ const c=m.category||'기타'; (byArea[c]=byArea[c]||[]).push(m); });
+    const areaKeys = AREAS.filter(a=>byArea[a]&&byArea[a].length).concat(Object.keys(byArea).filter(c=>!AREAS.includes(c)));
+    const root = { label: (st.name||'학생'), kind:'root', color:'#2c3e50', children:[] };
+    const makeMemoNode = (area, m)=>{
+      const tag = getTag(m.tag||'etc');
+      const rc = Object.keys(m.comments||{}).length;
+      const emoji = (tag.label.split(' ')[0]||'');
+      const body = mmTrunc(m.content || (m.image?'[캡처/사진]':'(내용 없음)'), 22);
+      return { label:(emoji+' '+body).trim(), kind:'memo', color:categoryColor(area), badge: rc?('💬'+rc):'', full:(m.content||'') };
+    };
+    areaKeys.forEach(area=>{
+      const list = byArea[area].slice().sort((a,b)=>a.createdAt-b.createdAt);
+      const areaNode = { label:area, kind:'area', color:categoryColor(area), children:[] };
+      if(area==='교과세특'){
+        const bySub = {};
+        list.forEach(m=>{ const s=(m.subject&&m.subject.trim())?m.subject.trim():'(과목 미지정)'; (bySub[s]=bySub[s]||[]).push(m); });
+        Object.keys(bySub).forEach(sub=>{ areaNode.children.push({ label:sub, kind:'subject', color:categoryColor(area), children: bySub[sub].map(m=>makeMemoNode(area,m)) }); });
+      } else {
+        areaNode.children = list.map(m=>makeMemoNode(area,m));
+      }
+      root.children.push(areaNode);
+    });
+    return root;
+  }
+  function mmLayout(root){
+    const ROWH=42, COLGAP=48, PADX=13;
+    const depths=[];
+    (function measure(node, depth){
+      node.depth=depth;
+      const label = node.label + (node.badge?('  '+node.badge):'');
+      node.w = Math.max(60, Math.min(248, mmMeasure(label, mmFontOf(node.kind))+PADX*2));
+      depths[depth]=Math.max(depths[depth]||0, node.w);
+      (node.children||[]).forEach(c=>measure(c, depth+1));
+    })(root,0);
+    const colX=[]; let acc=20;
+    for(let d=0; d<depths.length; d++){ colX[d]=acc; acc+=depths[d]+COLGAP; }
+    let leafIdx=0;
+    (function place(node){
+      node.x=colX[node.depth];
+      if(!(node.children&&node.children.length)){ node.y=leafIdx*ROWH+ROWH/2; leafIdx++; return; }
+      node.children.forEach(place);
+      node.y=(node.children[0].y + node.children[node.children.length-1].y)/2;
+    })(root);
+    return { totalW: acc+20, totalH: Math.max(leafIdx*ROWH, ROWH)+20 };
+  }
+  function mmRenderSVG(root, dims){
+    const svg=document.createElementNS(MM_NS,'svg');
+    svg.setAttribute('xmlns', MM_NS);
+    svg.setAttribute('width', dims.totalW); svg.setAttribute('height', dims.totalH);
+    svg.setAttribute('viewBox', `0 0 ${dims.totalW} ${dims.totalH}`);
+    svg.style.transform=`scale(${__mmZoom})`;
+    const edges=document.createElementNS(MM_NS,'g');
+    (function drawEdges(node){
+      (node.children||[]).forEach(c=>{
+        const p=document.createElementNS(MM_NS,'path');
+        const x1=node.x+node.w, y1=node.y, x2=c.x, y2=c.y, mx=(x1+x2)/2;
+        p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+        p.setAttribute('fill','none'); p.setAttribute('stroke', c.color||'#bbb'); p.setAttribute('stroke-width','2'); p.setAttribute('opacity','0.75');
+        edges.appendChild(p); drawEdges(c);
+      });
+    })(root);
+    svg.appendChild(edges);
+    (function drawNode(node){
+      const g=document.createElementNS(MM_NS,'g');
+      const rect=document.createElementNS(MM_NS,'rect');
+      rect.setAttribute('x',node.x); rect.setAttribute('y',node.y-15); rect.setAttribute('width',node.w); rect.setAttribute('height',30); rect.setAttribute('rx',9);
+      rect.setAttribute('fill', node.kind==='root' ? '#2c3e50' : lightenColor(node.color||'#ffffff', node.kind==='memo'?0.4:0.12));
+      rect.setAttribute('stroke', node.kind==='root' ? '#2c3e50' : (node.color||'#ccc'));
+      rect.setAttribute('stroke-width', node.kind==='root' ? '1' : '1.4');
+      g.appendChild(rect);
+      const text=document.createElementNS(MM_NS,'text');
+      text.setAttribute('x', node.x+node.w/2); text.setAttribute('y', node.y);
+      text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','central');
+      text.setAttribute('font-size', node.kind==='root'?16:node.kind==='area'?14:13);
+      text.setAttribute('font-weight', (node.kind==='memo'||node.kind==='subject')?'600':'700');
+      text.setAttribute('font-family','"Apple SD Gothic Neo","Malgun Gothic",sans-serif');
+      text.setAttribute('fill', node.kind==='root'?'#ffffff':'#2c3e50');
+      text.textContent = node.label + (node.badge?('  '+node.badge):'');
+      if(node.full){ const t=document.createElementNS(MM_NS,'title'); t.textContent=node.full; g.appendChild(t); }
+      g.appendChild(text);
+      svg.appendChild(g);
+      (node.children||[]).forEach(drawNode);
+    })(root);
+    return svg;
+  }
+  function renderMindmap(){
+    if(!__mmOpen) return;
+    const host=document.getElementById('mindmapCanvas'); if(!host) return;
+    const st=students[currentStudentId]||{};
+    const titleEl=document.getElementById('mindmapTitle'); if(titleEl) titleEl.textContent='🧠 '+(st.name||'학생')+' 마인드맵';
+    if(!currentStudentId || !Object.keys(currentMemos()).length){
+      host.innerHTML='<div class="mm-empty">아직 의견이 없습니다.<br>오른쪽 보드에 의견이 등록되면 여기 마인드맵에 <b>실시간</b>으로 나타납니다.</div>'; return;
+    }
+    const root=buildMindTree(); const dims=mmLayout(root); const svg=mmRenderSVG(root, dims);
+    host.innerHTML=''; host.appendChild(svg);
+  }
+  window.openMindmap = function(){
+    if(!currentStudentId){ alert('먼저 위쪽 탭에서 학생을 선택해 주세요.'); return; }
+    __mmOpen=true; __mmZoom=1;
+    document.getElementById('mindmapOverlay').style.display='block';
+    renderMindmap();
+  };
+  window.closeMindmap = function(){ __mmOpen=false; document.getElementById('mindmapOverlay').style.display='none'; };
+  window.mmZoom = function(f){ __mmZoom=Math.max(0.4, Math.min(2.4, __mmZoom*f)); const s=document.querySelector('#mindmapCanvas svg'); if(s) s.style.transform=`scale(${__mmZoom})`; };
+  window.mmFit = function(){ __mmZoom=1; const s=document.querySelector('#mindmapCanvas svg'); if(s) s.style.transform='scale(1)'; };
+  window.mmExportPng = function(){
+    const svg=document.querySelector('#mindmapCanvas svg'); if(!svg){ alert('내보낼 마인드맵이 없습니다.'); return; }
+    const w=+svg.getAttribute('width'), h=+svg.getAttribute('height');
+    const clone=svg.cloneNode(true); clone.style.transform='';
+    const xml=new XMLSerializer().serializeToString(clone);
+    const url='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
+    const img=new Image();
+    img.onload=()=>{ const sc=2, c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w*sc)); c.height=Math.max(1,Math.round(h*sc)); const x=c.getContext('2d'); x.fillStyle='#ffffff'; x.fillRect(0,0,c.width,c.height); x.scale(sc,sc); x.drawImage(img,0,0); const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download=((students[currentStudentId]||{}).name||'학생')+'_마인드맵.png'; a.click(); };
+    img.onerror=()=>alert('이미지 변환에 실패했습니다.');
+    img.src=url;
+  };
+  document.getElementById('mindmapBtn').addEventListener('click', window.openMindmap);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && __mmOpen) closeMindmap(); });
 
   /* ---------- 초기화 ---------- */
   if (role==='student' && myName) {
